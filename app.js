@@ -9,7 +9,8 @@ const bcrypt = require('bcrypt');
 const User = require('./models/User');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
