@@ -1,0 +1,16 @@
+<h2>Welcome <%= email %>!</h2>
+
+<form method="POST" action="/store">
+  <input name="key" placeholder="Key" required>
+  <input name="value" placeholder="Value" required>
+  <button type="submit">Save</button>
+</form>
+
+<h3>Your Key-Value Pairs:</h3>
+<ul>
+  <% for (const [key, value] of Object.entries(store)) { %>
+    <li><strong><%= key %></strong>: <%= value %></li>
+  <% } %>
+</ul>
+
+<a href="/logout">Logout</a>
