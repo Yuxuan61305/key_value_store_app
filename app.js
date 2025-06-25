@@ -20,6 +20,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(session({ secret: 'simple-secret', resave: false, saveUninitialized: false }));
 
 function isAuthenticated(req, res, next) {
