@@ -91,3 +91,66 @@ app.get('/logout', (req, res) => {
 app.listen(PORT, () => {
   console.log(`App running on http://localhost:${PORT}`);
 });
+
+
+
+// ===== API: User Registration =====
+app.post('/api/register', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: 'User already exists' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ email, password: hashedPassword });
+    await newUser.save();
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Registration failed', error: err.message });
+  }
+});
+
+// ===== API: User Login =====
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: 'Invalid email or password' });
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) return res.status(400).json({ message: 'Invalid email or password' });
+
+    req.session.userId = user._id;
+    res.status(200).json({ message: 'Login successful' });
+  } catch (err) {
+    res.status(500).json({ message: 'Login failed', error: err.message });
+  }
+});
+
+// ===== API: Store Key-Value Pair =====
+app.post('/api/store', isAuthenticated, async (req, res) => {
+  const { key, value } = req.body;
+  try {
+    const user = await User.findById(req.session.userId);
+    user.store.set(key, value);
+    await user.save();
+    res.status(200).json({ message: 'Key-Value stored successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Storing failed', error: err.message });
+  }
+});
+
+// ===== API: Retrieve Key-Value =====
+app.get('/api/retrieve/:key', isAuthenticated, async (req, res) => {
+  const key = req.params.key;
+  try {
+    const user = await User.findById(req.session.userId);
+    if (user.store.has(key)) {
+      res.status(200).json({ key: key, value: user.store.get(key) });
+    } else {
+      res.status(404).json({ message: 'Key not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Retrieval failed', error: err.message });
+  }
+});
