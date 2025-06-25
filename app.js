@@ -97,6 +97,7 @@ app.listen(PORT, () => {
 // ===== API: User Registration =====
 app.post('/api/register', async (req, res) => {
   const { email, password } = req.body;
+  console.dir(req.body)
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
@@ -113,6 +114,7 @@ app.post('/api/register', async (req, res) => {
 // ===== API: User Login =====
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
+  console.dir(req.body)
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid email or password' });
@@ -130,6 +132,7 @@ app.post('/api/login', async (req, res) => {
 // ===== API: Store Key-Value Pair =====
 app.post('/api/store', isAuthenticated, async (req, res) => {
   const { key, value } = req.body;
+   console.dir(req.body)
   try {
     const user = await User.findById(req.session.userId);
     user.store.set(key, value);
