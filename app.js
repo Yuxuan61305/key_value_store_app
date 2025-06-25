@@ -40,6 +40,7 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+  console.dir(req.body)
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (user && await bcrypt.compare(password, user.password)) {
@@ -55,6 +56,7 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
+  console.dir(req.body)
   const { email, password } = req.body;
   const existing = await User.findOne({ email });
   if (existing) {
@@ -96,8 +98,8 @@ app.listen(PORT, () => {
 
 // ===== API: User Registration =====
 app.post('/api/register', async (req, res) => {
-  const { email, password } = req.body;
   console.dir(req.body)
+  const { email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
@@ -113,8 +115,8 @@ app.post('/api/register', async (req, res) => {
 
 // ===== API: User Login =====
 app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
   console.dir(req.body)
+  const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid email or password' });
@@ -131,6 +133,7 @@ app.post('/api/login', async (req, res) => {
 
 // ===== API: Store Key-Value Pair =====
 app.post('/api/store', isAuthenticated, async (req, res) => {
+  console.dir(req.body)
   const { key, value } = req.body;
    console.dir(req.body)
   try {
